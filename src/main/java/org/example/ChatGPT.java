@@ -1,14 +1,21 @@
 package org.example;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+
+import java.io.OutputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class ChatGPT {
     public static String search(String text, String version, String apiKey, int max_tokens, double temperature) throws Exception {
@@ -92,6 +99,68 @@ public class ChatGPT {
         return search(prompt, version, apiKey, max_tokens, temperature);
     }
 
+    public static String generateTkn(String code, String client_id, String client_secret) {
+        try {
+            URL url = new URL("https://accounts.zoho.com/oauth/v2/token");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            conn.setDoOutput(true);
+
+            String data = "code=" + code
+                    + "&grant_type=authorization_code"
+                    + "&client_id="+ client_id
+                    + "&client_secret="+ client_secret
+                    + "&redirect_uri=https://www.zoho.com";
+
+            OutputStream os = conn.getOutputStream();
+            byte[] input = data.getBytes("utf-8");
+            os.write(input, 0, input.length);
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+            StringBuilder response = new StringBuilder();
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+            String jsonResponseStr = response.toString().trim();
+            JSONObject jsonResponse = new JSONObject(jsonResponseStr);
+            String accessToken = jsonResponse.getString("access_token");
+            return accessToken;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return e.getMessage();
+        }
+    }
+
+    public static String invokeGet(String url, String code, String client_id, String client_secret) throws Exception {
+        OkHttpClient client = new OkHttpClient();
+
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
+
+        Request request = new Request.Builder()
+                .url(urlBuilder.toString())
+                .method("GET", null)
+                .header("Accept", "application/vnd.manageengine.sdp.v3+json")
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .header("Authorization", "Zoho-oauthtoken " + generateTkn(code, client_id, client_secret))
+                .build();
+        try {
+
+            Response output = client.newCall(request).execute();
+
+            if (output.isSuccessful()) {
+                return new JSONObject(output.body().string()).toString();
+            } else {
+                return "Error response from server: " + output.code();
+            }
+        } catch (Exception e) {
+            return "Exception while making the API request: " + e.getMessage();
+        }
+    }
+
 
     public static void main(String[] args) throws Exception {
         /*
@@ -99,7 +168,7 @@ public class ChatGPT {
                 "gpt-3.5-turbo",
                 "",
                 4000,
-                1.0));*/
+                1.0));
 
         System.out.println(searchOnWebPage("Entrepreneur cuantos seguidores tiene en Instagram?",
                 "https://www.crehana.com/blog/transformacion-digital/blogs-mas-famosos/",
@@ -107,7 +176,6 @@ public class ChatGPT {
                 " ",
                 4000,
                 1.0));
-
-
+        */
     }
 }
