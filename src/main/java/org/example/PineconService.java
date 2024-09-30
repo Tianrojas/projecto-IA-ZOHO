@@ -1,16 +1,15 @@
 package org.example;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
-import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
+import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.pinecone.PineconeEmbeddingStore;
 import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
 import dev.langchain4j.store.embedding.EmbeddingSearchResult;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import org.json.JSONObject;
+import static dev.langchain4j.model.openai.OpenAiEmbeddingModelName.TEXT_EMBEDDING_3_SMALL;
 
-
-import static dev.langchain4j.model.openai.OpenAiChatModelName.*;
 /**
  * This class is a placeholder for services related to Pinecone, a vector database service.
  * Currently, the class does not implement any specific functionality but can be extended
@@ -19,18 +18,6 @@ import static dev.langchain4j.model.openai.OpenAiChatModelName.*;
 public class PineconService {
 
     private static EmbeddingStore<TextSegment> embeddingStore;
-
-    /**
-     * The main method serves as the entry point for the PineconService class.
-     * Currently, it does not perform any actions but can be used to test or demonstrate
-     * future functionality related to Pinecone services.
-     *
-     * @param args Command-line arguments (not used).
-     * @throws Exception If an error occurs during execution (currently no exceptions are expected).
-     */
-    public static void main(String[] args) throws Exception {
-
-    }
 
     /**
      * This method performs a semantic search using a prompt in the Pinecone vector database
@@ -57,7 +44,7 @@ public class PineconService {
      */
 
 
-    public static JSONObject searchVectorPinecone(String apiKey, String index, String nameSpace, String prompt) throws Exception{
+    public static JSONObject searchVectorPinecone(String openAApikey,String apiKey, String index, String nameSpace, String prompt) throws Exception{
 
         embeddingStore = PineconeEmbeddingStore.builder()
                 .apiKey(apiKey)         //"19199b7e-571d-4dd3-aee6-c3397cbc1b97"
@@ -65,7 +52,10 @@ public class PineconService {
                 .nameSpace(nameSpace)   //"dev.langchain4j.store.embedding.pinecone.PineconeServerlessIndexConfig@7d38aed2"
                 .build();
 
-        EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
+        EmbeddingModel embeddingModel = OpenAiEmbeddingModel.builder()
+                .apiKey(openAApikey)
+                .modelName(TEXT_EMBEDDING_3_SMALL)
+                .build();
 
         Embedding queryEmbedding = embeddingModel.embed(prompt).content();
         EmbeddingSearchRequest searchRequest = EmbeddingSearchRequest.builder()
@@ -93,4 +83,17 @@ public class PineconService {
 
         return jsonResponse;
     }
+
+
+    /**
+     * The main method serves as the entry point for the PineconService class.
+     * Currently, it does not perform any actions but can be used to test or demonstrate
+     * future functionality related to Pinecone services.
+     *
+     * @param args Command-line arguments (not used).
+     * @throws Exception If an error occurs during execution (currently no exceptions are expected).
+     */
+    public static void main(String[] args) throws Exception {
+    }
+
 }

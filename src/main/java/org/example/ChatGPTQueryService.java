@@ -120,7 +120,7 @@ public class ChatGPTQueryService {
                 .modelName(GPT_4_O)
                 .temperature(temperature)
                 .build();
-        String queryWithKnowledge =  PineconService.searchVectorPinecone(pineconeApiKey, index, nameSpace, prompt).getString("queryWithKnowledge");
+        String queryWithKnowledge =  PineconService.searchVectorPinecone(apiKey,pineconeApiKey, index, nameSpace, prompt).getString("queryWithKnowledge");
         String responseWithKnowledge = chatModel.generate(queryWithKnowledge);
         JSONObject jsonResponse = new JSONObject();
         jsonResponse.put("responseWithKnowledge", responseWithKnowledge);
@@ -151,9 +151,9 @@ public class ChatGPTQueryService {
         System.out.println(searchOnPinecone("",
                 "gpt-4",
                 1.0,
-                "19199b7e-571d-4dd3-aee6-c3397cbc1b97",
-                "knowledge-test2-llmhugginface",
-                "dev.langchain4j.store.embedding.pinecone.PineconeServerlessIndexConfig@7d38aed2",
+                "",
+                "",
+                "",
                 "¿Cuáles son los 3 primeros pasos para empezar a utilizar el WonderVector5000?").getString("responseWithKnowledge"));
 
     }
