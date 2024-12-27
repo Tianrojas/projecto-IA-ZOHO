@@ -1,6 +1,5 @@
-package controller;
-import org.example.PineconService;
-import org.springframework.beans.factory.annotation.Value;
+package org.api.controller;
+import org.api.services.PineconService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.json.JSONObject;
@@ -42,6 +41,7 @@ public class PineconeController {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }
+
     /**
      * Endpoint to perform a semantic search using Pinecone without generating a response.
      *
@@ -66,4 +66,10 @@ public class PineconeController {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }
+
+    @GetMapping("/test")
+    public String test() {
+        return "Hello";
+    }
+
 }

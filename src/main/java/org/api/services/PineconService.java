@@ -1,4 +1,4 @@
-package org.example;
+package org.api.services;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.openai.OpenAiChatModel;
@@ -9,10 +9,6 @@ import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
 import dev.langchain4j.store.embedding.EmbeddingSearchResult;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import org.json.JSONObject;
-import dev.langchain4j.model.chat.ChatLanguageModel;
-import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_O;
-import static dev.langchain4j.model.openai.OpenAiEmbeddingModelName.TEXT_EMBEDDING_3_SMALL;
-import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 /**
@@ -20,6 +16,7 @@ import org.springframework.stereotype.Service;
  * Currently, the class does not implement any specific functionality but can be extended
  * to interact with Pinecone APIs or services.
  */
+@Service
 public class PineconService {
 
     private static EmbeddingStore<TextSegment> embeddingStore;
@@ -107,18 +104,6 @@ public class PineconService {
             jsonResponse.put("error", "No se encontró ningún resultado en Pinecone.");
         }
         return jsonResponse;
-    }
-
-
-    /**
-     * The main method serves as the entry point for the PineconService class.
-     * Currently, it does not perform any actions but can be used to test or demonstrate
-     * future functionality related to Pinecone services.
-     *
-     * @param args Command-line arguments (not used).
-     * @throws Exception If an error occurs during execution (currently no exceptions are expected).
-     */
-    public static void main(String[] args) throws Exception {
     }
 
 }
