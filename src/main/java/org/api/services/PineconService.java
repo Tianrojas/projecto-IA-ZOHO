@@ -39,7 +39,7 @@ public class PineconService {
         // Initialize OpenAI chat model
         OpenAiChatModel chatModel = OpenAiChatModel.builder()
                 .apiKey(openAiApiKey)
-                .modelName("GPT_4_O")
+                .modelName("gpt-4")
                 .temperature(temperature)
                 .build();
 
@@ -78,7 +78,7 @@ public class PineconService {
         // Initialize embedding model
         EmbeddingModel embeddingModel = OpenAiEmbeddingModel.builder()
                 .apiKey(openAiApiKey)
-                .modelName("TEXT_EMBEDDING_3_SMALL")
+                .modelName("text-embedding-3-small")
                 .build();
 
         // Generate embedding for the prompt
