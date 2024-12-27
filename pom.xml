@@ -63,47 +63,30 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-json</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.12</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.12</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.0.1</version>
                 <executions>
                     <execution>
+                        <id>copy-dependencies</id>
                         <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <createDependencyReducedPom>true</createDependencyReducedPom>
-                            <minimizeJar>true</minimizeJar>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <!-- Excluir arquitecturas específicas de Netty no necesarias -->
-                                        <exclude>**/io/netty/netty-tcnative-boringssl-static/osx-**</exclude>
-                                        <exclude>**/io/netty/netty-tcnative-boringssl-static/windows-**</exclude>
-                                        <exclude>**/io/netty/netty-tcnative-boringssl-static/linux-aarch_64/**</exclude>
-                                        <!-- Excluir versiones no necesarias de kotlin-stdlib -->
-                                        <exclude>**/org/jetbrains/kotlin/kotlin-stdlib-jdk7/**</exclude>
-                                        <exclude>**/org/jetbrains/kotlin/kotlin-stdlib-common/**</exclude>
-                                        <!-- Excluir clases internas y ejemplos no utilizados -->
-                                        <exclude>**/dev/langchain4j/examples/**</exclude>
-                                        <exclude>**/com/squareup/okhttp3/internal/**</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                            <relocations>
-                                <relocation>
-                                    <pattern>dev.langchain4j</pattern>
-                                    <shadedPattern>shaded.dev.langchain4j</shadedPattern>
-                                </relocation>
-                            </relocations>
-                        </configuration>
+                        <goals><goal>copy-dependencies</goal></goals>
                     </execution>
                 </executions>
             </plugin>
