@@ -1,4 +1,5 @@
 package org.api.services;
+
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.openai.OpenAiChatModel;
@@ -11,6 +12,8 @@ import dev.langchain4j.model.embedding.EmbeddingModel;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * This class is a placeholder for services related to Pinecone, a vector database service.
  * Currently, the class does not implement any specific functionality but can be extended
@@ -19,28 +22,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class PineconService {
 
-    private static EmbeddingStore<TextSegment> embeddingStore;
-
-    /**
-     * Performs a semantic search in Pinecone and generates a response using OpenAI.
-     *
-     * @param openAiApiKey   API key for OpenAI.
-     * @param pineconeApiKey API key for Pinecone.
-     * @param index          Pinecone index name where vector data is stored.
-     * @param nameSpace      Namespace within the Pinecone index.
-     * @param prompt         Query prompt to be processed.
-     * @param temperature    Temperature for OpenAI response generation.
-     * @return               JSON response containing the generated response.
-     * @throws Exception     If an error occurs during processing.
-     */
-
-
     public JSONObject performSearch(String openAiApiKey, String pineconeApiKey, String index, String nameSpace, String prompt, Double temperature) throws Exception {
         // Initialize OpenAI chat model
         OpenAiChatModel chatModel = OpenAiChatModel.builder()
                 .apiKey(openAiApiKey)
-                .modelName("gpt-4")
+                .modelName("gpt-3.5-turbo")
                 .temperature(temperature)
+                .maxTokens(200) // Limitar el número de tokens para evitar respuestas muy largas
+                .stop(List.of("3.", "4."))
                 .build();
 
         // Fetch knowledge from Pinecone
@@ -53,20 +42,10 @@ public class PineconService {
         // Create JSON response
         JSONObject jsonResponse = new JSONObject();
         jsonResponse.put("responseWithKnowledge", responseWithKnowledge);
+
         return jsonResponse;
     }
 
-    /**
-     * Performs a semantic search in Pinecone using an input prompt.
-     *
-     * @param openAiApiKey   API key for OpenAI.
-     * @param pineconeApiKey API key for Pinecone.
-     * @param index          Pinecone index name where vector data is stored.
-     * @param nameSpace      Namespace within the Pinecone index.
-     * @param prompt         Query prompt to be processed.
-     * @return               JSON response containing the search result or an error message.
-     * @throws Exception     If an error occurs during processing.
-     */
     public JSONObject searchVectorPinecone(String openAiApiKey, String pineconeApiKey, String index, String nameSpace, String prompt) throws Exception {
         // Initialize Pinecone embedding store
         PineconeEmbeddingStore embeddingStore = PineconeEmbeddingStore.builder()
@@ -103,7 +82,7 @@ public class PineconService {
         } else {
             jsonResponse.put("error", "No se encontró ningún resultado en Pinecone.");
         }
+
         return jsonResponse;
     }
-
 }
